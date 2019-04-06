@@ -9,24 +9,26 @@ IMG_SIZE=28
 def load_img(img):
     #print(cv2.imread(img))
     img_array_gray=cv2.imread(img, cv2.IMREAD_GRAYSCALE)
-    #print(img_array_gray)
+    
     new_img=cv2.resize(img_array_gray,(IMG_SIZE,IMG_SIZE))
-    plt.imshow(new_img, cmap="gray")
-    plt.show()
+    new_img=cv2.normalize(new_img,None,alpha=0,beta=1,norm_type=cv2.NORM_MINMAX,dtype=cv2.CV_32F)
 
-    return (new_img)
-#output: image array 28x28 in gray scale
-
-
-
+    #plt.imshow(new_img, cmap="gray")
+    #plt.show()
+    new_img = new_img.reshape(1,1,28,28)
+    print(new_img)
+    return new_img
+    
+    
 def test(img):
     #load cnn
     model = load('./trained_cnn.joblib')
     #test
     score = model.predict(load_img(img))
+    print("Hola:\n")
     print(score)
 
 def main():
-    test('./testset/1.jpg')
+    test('./testset/2.jpeg')
     
 main()
