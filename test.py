@@ -13,6 +13,7 @@ def load_img(img):
     new_img=cv2.resize(img_array_gray,(IMG_SIZE,IMG_SIZE))
     plt.imshow(new_img, cmap="gray")
     plt.show()
+
     return (new_img)
 #output: image array 28x28 in gray scale
 
