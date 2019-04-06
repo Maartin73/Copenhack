@@ -22,9 +22,10 @@ def test(img):
     #load cnn
     model = load('./trained_cnn.joblib')
     #test
-    model.predict(load_img(img))
+    score = model.predict(load_img(img))
+    print(score)
 
 def main():
-    x= load_img('./testset/1.jpg')
-    print(x)
+    test('./testset/1.jpg')
+    
 main()
