@@ -9,6 +9,10 @@ from keras import backend as k
 from sklearn import preprocessing
 from joblib import dump
 
+
+import matplotlib.pyplot as plt
+
+
 def load_data():
     path_train = "./dataset/sign_mnist_train.csv"
     path_test = "./dataset/sign_mnist_test.csv"
@@ -41,11 +45,16 @@ def load_data():
     #print(X_train)
 
 
-
+def dataset():
+    #print(X_test[0])
+    new_img = [x for img in X_test[0] for x in img]
+    plt.imshow(new_img, cmap="gray")
+    plt.show()
 def main():
     load_data()
-    train()
-    save()
+    #train()
+    #save()
+    dataset()
 
 def train():
     global model
