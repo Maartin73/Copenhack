@@ -205,6 +205,7 @@ def eval():
     Y_test = Y_test[:30000]
 
     score = cnn.evaluate(X_test, Y_test, verbose=0)
+
     print(score)
 
 
