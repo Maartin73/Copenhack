@@ -55,10 +55,11 @@ def dataset():
 
 def main():
     #load_data()
-    train2()
-    train()
-    save()
+    #train2()
+    #train()
+    #save()
     #dataset()
+    eval()
 
 imageSize=50
 train_dir = "./dataset2/asl-alphabet/asl_alphabet_train/"
@@ -156,7 +157,7 @@ def train2():
     X_test, y_test= get_data(test_dir) # Too few images
 
     
-   # X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.2) 
+    #X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.2) 
 
     # Encode labels to hot vectors (ex : 2 -> [0,0,1,0,0,0,0,0,0,0])
     
@@ -193,9 +194,17 @@ def train():
     # 9. Fit model on training data
     h = model.fit(X_train, Y_train, batch_size=128, epochs=10, verbose=1)
     
-    #cnn = load('./trained_cnn.joblib')
-    # 10. Evaluate model on test data
-    score = model.evaluate(X_test, Y_test, verbose=0)
+   
+
+def eval():
+    cnn = load('./trained_cnn.joblib')
+    # 10. Evaluate model on test dat
+    X_test, Y_test= get_data(test_dir)
+    Y_test = to_categorical(Y_test, num_classes = 30)
+    X_test = X_test[:30000]
+    Y_test = Y_test[:30000]
+
+    score = cnn.evaluate(X_test, Y_test, verbose=0)
     print(score)
 
 
