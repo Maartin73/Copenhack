@@ -21,9 +21,6 @@ import matplotlib.pyplot as plt
 def load_data():
     path_train = "./dataset/sign_mnist_train.csv"
     path_test = "./dataset/sign_mnist_test.csv"
-
-    global X_train, Y_train, X_test, Y_test
-
     #load the train data
     train = pd.read_csv(path_train).values
     X_train = train[:, 1:].reshape(train.shape[0],1,28, 28).astype( 'float32' )
@@ -70,10 +67,7 @@ from tqdm import tqdm
 
 def get_data(folder):
     imageSize=50
-    train_dir = "../input/asl-alphabet/asl_alphabet_train/asl_alphabet_train/"
-    test_dir =  "../input/asl-alphabet/asl_alphabet_test/asl_alphabet_test/"
-
-    global X_train, Y_train, X_test, Y_test
+    
     """
     Load the data and labels from the given folder.
     """
@@ -142,9 +136,9 @@ def get_data(folder):
             else:
                 label = 29
             for image_filename in tqdm(os.listdir(folder + folderName)):
-                img_file = cv2.imread(folder + folderName + '/' + image_filename)
-                if img_file is not None:
-                    img_file = skimage.transform.resize(img_file, (imageSize, imageSize, 3))
+                img_file = cv2.imread(folder + folderName + '/' + image_filename,cv2.IMREAD_GRAYSCALE)
+                if img_file is not None:       
+                    img_file = skimage.transform.resize(img_file, (1,imageSize, imageSize))
                     img_arr = np.asarray(img_file)
                     X.append(img_arr)
                     y.append(label)
@@ -153,12 +147,16 @@ def get_data(folder):
     return X,y
 
 def train2():
+    global X_train, Y_train, X_test, Y_test
+
+    train_dir = "dataset2/asl-alphabet/asl_alphabet_train/"
+    test_dir =  "dataset2/asl-alphabet/asl_alphabet_test/"
 
     X_train, y_train = get_data(train_dir) 
     X_test, y_test= get_data(test_dir) # Too few images
 
     
-    #X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.2) 
+   # X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.2) 
 
     # Encode labels to hot vectors (ex : 2 -> [0,0,1,0,0,0,0,0,0,0])
     
@@ -166,19 +164,19 @@ def train2():
     Y_test = to_categorical(y_test, num_classes = 30)
     # Shuffle data to permit further subsampling
     
-    X_train, Y_train = shuffle(X_train, Y_train, random_state=13)
-    X_test, Y_test = shuffle(X_test, Y_test, random_state=13)
-    #X_train = X_train[:30000]
-    #X_test = X_test[:30000]
-    #y_trainHot = y_trainHot[:30000]
-    #y_testHot = y_testHot[:30000]
+    #X_train, Y_train = shuffle(X_train, Y_train, random_state=13)
+    #X_test, Y_test = shuffle(X_test, Y_test, random_state=13)
+    X_train = X_train[:30000]
+    X_test = X_test[:30000]
+    Y_train = Y_train[:30000]
+    Y_test = Y_test[:30000]
 
 def train():
-    global model
+    global model, X_train,Y_train, X_test, Y_test
 
     model = Sequential()
     k.set_image_dim_ordering('th')
-    model.add(Convolution2D(64, 3, 3, border_mode= 'valid' , input_shape=(1, 50, 50),activation= 'relu' ))
+    model.add(Convolution2D(64, 3, 3, border_mode= 'valid' , input_shape=(1, 50, 50), activation= 'relu' ))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Convolution2D(64, 3, 3, activation= 'relu' ))
     model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -195,9 +193,9 @@ def train():
     # 9. Fit model on training data
     h = model.fit(X_train, Y_train, batch_size=128, epochs=10, verbose=1)
     
-    cnn = load('./trained_cnn.joblib')
+    #cnn = load('./trained_cnn.joblib')
     # 10. Evaluate model on test data
-    score = cnn.evaluate(X_test, Y_test, verbose=0)
+    score = model.evaluate(X_test, Y_test, verbose=0)
     print(score)
 
 
